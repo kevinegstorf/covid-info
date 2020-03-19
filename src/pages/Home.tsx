@@ -23,8 +23,6 @@ const useStyles = makeStyles((theme: Theme) =>
 function HompePage(props: any) {
   const classes = useStyles();
 
-  console.log(props);
-
   return (
     <div className={classes.root}>
       <Paper className={classes.paper} elevation={3}>

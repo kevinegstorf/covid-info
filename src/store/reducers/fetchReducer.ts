@@ -1,11 +1,6 @@
-import { FETCH_API } from "../types";
+import { FETCH_API, Actions } from "../types";
 
-type Action = {
-  type: any;
-  payload: any;
-};
-
-export default function(state = [], action: Action) {
+export default function(state = [], action: Actions) {
   switch (action.type) {
     case FETCH_API:
       const locations = action.payload.data.locations;

@@ -36,8 +36,13 @@ function HomePage(props: Props): JSX.Element {
         <Typography variant="h6" className={classes.title}>
           Home
           <Button onClick={props.FetchApi}>Click</Button>
-          <AppTable location={props.locations} />
-          {props.locations.map((location: Location) => {
+          {props.locations ? (
+            <AppTable locations={props.locations} />
+          ) : (
+            <h2>Oeps</h2>
+          )}
+          {/* <AppTable locations={props.locations} /> */}
+          {/* {props.locations.map((location: Location) => {
             return (
               <div key={location.id}>
                 <div>{location.country}</div>
@@ -46,7 +51,7 @@ function HomePage(props: Props): JSX.Element {
                 <div>{location.latest.recovered}</div>
               </div>
             );
-          })}
+          })} */}
         </Typography>
       </Paper>
     </div>

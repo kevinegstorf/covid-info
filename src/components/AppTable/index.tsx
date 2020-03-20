@@ -11,7 +11,7 @@ import TableRow from "@material-ui/core/TableRow";
 import { Location } from "../../types";
 
 interface Column {
-  id: "name" | "code" | "population" | "size" | "density";
+  id: "country" | "confirmed" | "deaths" | "recovered";
   label: string;
   minWidth?: number;
   align?: "right";
@@ -19,66 +19,41 @@ interface Column {
 }
 
 const columns: Column[] = [
-  { id: "name", label: "Name", minWidth: 170 },
-  { id: "code", label: "ISO\u00a0Code", minWidth: 100 },
+  { id: "country", label: "Country", minWidth: 170 },
+  { id: "confirmed", label: "Confirmed", minWidth: 100 },
   {
-    id: "population",
-    label: "Population",
+    id: "deaths",
+    label: "Deaths",
     minWidth: 170,
     align: "right",
     format: (value: number) => value.toLocaleString()
   },
   {
-    id: "size",
-    label: "Size\u00a0(km\u00b2)",
+    id: "recovered",
+    label: "Recovered",
     minWidth: 170,
     align: "right",
     format: (value: number) => value.toLocaleString()
-  },
-  {
-    id: "density",
-    label: "Density",
-    minWidth: 170,
-    align: "right",
-    format: (value: number) => value.toFixed(2)
   }
 ];
 
 interface Data {
-  name: string;
-  code: string;
-  population: number;
-  size: number;
-  density: number;
+  country: string;
+  confirmed: number;
+  deaths: number;
+  recovered: number;
 }
 
 function createData(
-  name: string,
-  code: string,
-  population: number,
-  size: number
+  country: string,
+  confirmed: number,
+  deaths: number,
+  recovered: number
 ): Data {
-  const density = population / size;
-  return { name, code, population, size, density };
+  return { country, confirmed, deaths, recovered };
 }
 
-const rows = [
-  createData("India", "IN", 1324171354, 3287263),
-  createData("China", "CN", 1403500365, 9596961),
-  createData("Italy", "IT", 60483973, 301340),
-  createData("United States", "US", 327167434, 9833520),
-  createData("Canada", "CA", 37602103, 9984670),
-  createData("Australia", "AU", 25475400, 7692024),
-  createData("Germany", "DE", 83019200, 357578),
-  createData("Ireland", "IE", 4857000, 70273),
-  createData("Mexico", "MX", 126577691, 1972550),
-  createData("Japan", "JP", 126317000, 377973),
-  createData("France", "FR", 67022000, 640679),
-  createData("United Kingdom", "GB", 67545757, 242495),
-  createData("Russia", "RU", 146793744, 17098246),
-  createData("Nigeria", "NG", 200962417, 923768),
-  createData("Brazil", "BR", 210147125, 8515767)
-];
+const rows: any = [];
 
 const useStyles = makeStyles({
   root: {
@@ -90,14 +65,25 @@ const useStyles = makeStyles({
 });
 
 interface Props {
-  location?: Array<Location>;
+  locations: Array<Location>;
 }
 
 export function AppTable(props: Props) {
-  console.log(props);
   const classes = useStyles();
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
+
+  props.locations.map((loc: any) => {
+    console.log(loc);
+    const row = createData(
+      loc.id,
+      loc.country,
+      loc.latest.confirmed,
+      loc.latest.deaths
+    );
+
+    rows.push(row);
+  });
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
@@ -110,7 +96,28 @@ export function AppTable(props: Props) {
     setPage(0);
   };
 
-  console.log(props);
+  const renderRows = (rows: any) => {
+    if (rows.length !== 0) {
+      return rows.map((row: any) => {
+        return (
+          <TableRow hover role="checkbox" tabIndex={-1} key={row.country}>
+            {columns.map(column => {
+              const value = row[column.id];
+              return (
+                <TableCell key={column.id} align={column.align}>
+                  {column.format && typeof value === "number"
+                    ? column.format(value)
+                    : value}
+                </TableCell>
+              );
+            })}
+          </TableRow>
+        );
+      });
+    } else {
+      return null;
+    }
+  };
 
   return (
     <Paper className={classes.root}>
@@ -129,26 +136,7 @@ export function AppTable(props: Props) {
               ))}
             </TableRow>
           </TableHead>
-          <TableBody>
-            {rows
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map(row => {
-                return (
-                  <TableRow hover role="checkbox" tabIndex={-1} key={row.code}>
-                    {columns.map(column => {
-                      const value = row[column.id];
-                      return (
-                        <TableCell key={column.id} align={column.align}>
-                          {column.format && typeof value === "number"
-                            ? column.format(value)
-                            : value}
-                        </TableCell>
-                      );
-                    })}
-                  </TableRow>
-                );
-              })}
-          </TableBody>
+          <TableBody>{renderRows(rows)}</TableBody>
         </Table>
       </TableContainer>
       <TablePagination

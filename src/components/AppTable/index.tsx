@@ -74,7 +74,6 @@ export function AppTable(props: Props) {
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
   props.locations.map((loc: any) => {
-    console.log(loc);
     const row = createData(
       loc.id,
       loc.country,

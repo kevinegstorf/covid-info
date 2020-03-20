@@ -24,16 +24,12 @@ const columns: Column[] = [
   {
     id: "deaths",
     label: "Deaths",
-    minWidth: 170,
-    align: "right",
-    format: (value: number) => value.toLocaleString()
+    minWidth: 170
   },
   {
     id: "recovered",
     label: "Recovered",
-    minWidth: 170,
-    align: "right",
-    format: (value: number) => value.toLocaleString()
+    minWidth: 170
   }
 ];
 
@@ -74,11 +70,12 @@ export function AppTable(props: Props) {
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
   props.locations.map((loc: any) => {
+    console.log(loc);
     const row = createData(
-      loc.id,
       loc.country,
       loc.latest.confirmed,
-      loc.latest.deaths
+      loc.latest.deaths,
+      loc.latest.recovered
     );
 
     rows.push(row);
